@@ -5,7 +5,7 @@ MatCopter is a library for processing atmospheric measurments with quadcopters i
 Description is under development. For now, you could try it on you own risk.
 
 ### Credits
-The results here are the part of the [__project funded by Russian Science Foundation, project no. 21-17-00249__](http://ifaran.ru/ras/view/project/general.html?id=71738)
+The results here are the part of the __project funded by Russian Science Foundation, [project no. 21-17-00249](http://ifaran.ru/ras/view/project/general.html?id=71738)__
 
 #### Working group:
 * [Mikhail Varentsov](https://www.researchgate.net/profile/Mikhail-Varentsov-2)
