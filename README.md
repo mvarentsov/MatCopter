@@ -11,6 +11,7 @@ The results here are the part of the __project funded by Russian Science Foundat
 * Mikhail Varentsov
 * Alexander Varentsov
 * Arseniy Artamonov
+* Irina Repina
 
 ### License
 The project is under MIT license
