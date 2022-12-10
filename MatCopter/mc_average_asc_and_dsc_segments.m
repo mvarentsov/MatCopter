@@ -1,5 +1,9 @@
 function [pr_mean, pr_min, pr_max, west_cutoff] = mc_average_asc_and_dsc_segments (pr_asc, pr_dsc, WEST_WIND_CORR)
-
+    try
+        WEST_WIND_CORR;
+    catch exc
+        WEST_WIND_CORR = nan;
+    end
     
     varnames_asc = pr_asc.Properties.VariableNames;
     varnames_dsc = pr_dsc.Properties.VariableNames;
