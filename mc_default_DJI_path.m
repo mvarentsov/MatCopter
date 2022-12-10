@@ -1,3 +1,6 @@
+%d:\! Work\! IFA\! campaigns\Barentsburg2022\Flights\DJI\'
+%d:\! Work\! IFA\! campaigns\Barentsburg 2022\Flights\DJI\
+
 function [ dji_path, fly_str] = mc_default_DJI_path (xf_path, dji_dir_name, pattern)
 
     try

@@ -90,7 +90,7 @@ function [best_dt, best_dt_asc, best_dt_w] = mc_correct_time_shift (dji_data_src
     end
 
     if (abs (round (best_dt / time_step)) >= 30)
-        error ('Too big best_dt, check here');
+        warning ('Too big best_dt, check here');
     end
 end
 

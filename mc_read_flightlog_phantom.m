@@ -55,10 +55,10 @@ function [data] = mc_read_flightlog_phantom (csv_path, reload)
     var_headers.wind_e      = {'WindE'};
     var_headers.winds       = {'WindSpeed', 'windSpeed'};
     var_headers.windd       = {'windDirection'};
-    var_headers.ctrl_elev   = {'Controller:Elevator'};
-    var_headers.ctrl_rud    = {'Controller:Rudder'};
-    var_headers.ctrl_thr    = {'Controller:Throttle'};
-    var_headers.ctrl_aer    = {'Controller:Aileron'};
+    var_headers.ctrl_elev   = {'Controller:Elevator', 'Controller:ctrl_pitch:D'};
+    var_headers.ctrl_rud    = {'Controller:Rudder', 'Controller:ctrl_yaw:D'};
+    var_headers.ctrl_thr    = {'Controller:Throttle', 'Controller:ctrl_thr:D'};
+    var_headers.ctrl_aer    = {'Controller:Aileron', 'Controller:ctrl_roll:D'};
     var_headers.attribute   = {'Attribute'};
     
     var_headers_txt      = {'gps_time', 'fly_state', 'attribute'};
@@ -250,9 +250,9 @@ function [data] = mc_read_flightlog_phantom (csv_path, reload)
     [~, unique_ind] = unique (data.vars.time);
     data.vars = data.vars (unique_ind, :);
     
-    if (numel (find (~isnan (data.vars.rel_height))) == 0)
+    if (numel (find (~isnan (data.vars.rel_height))) == 0 || numel (find (~isnan (data.vars.rel_height))) < numel (find (~isnan (data.vars.alti))))
         if (numel (find (~isnan (data.vars.alti))) > 0)
-            warning ('rel_height data in empty, alti variable will be used');
+            warning ('alti is used instead of rel_height');
             data.vars.alti (data.vars.alti == 0) = nan;
             data.vars.abs_height = data.vars.alti;
             data.vars.rel_height = data.vars.alti - min (data.vars.alti);

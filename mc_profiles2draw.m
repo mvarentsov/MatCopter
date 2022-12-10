@@ -1,13 +1,13 @@
 function [val_mean, val, west_cutoff] = mc_profiles2draw (pr_asc, pr_dsc, varname, WEST_WIND_CORR)
     try
         WEST_WIND_CORR;
-    catch exc;
+    catch exc
         WEST_WIND_CORR = nan;
     end
     
     west_cutoff = nan;
     
-    if (~isempty (strfind (varname, 'windd')) || ~isempty (strfind (varname, 'yaw')))
+    if (contains (varname, 'windd') || contains (varname, 'yaw'))
         vel_varname = strrep (varname, 'windd', 'winds');
         u_varname = [vel_varname, '_u'];
         v_varname = [vel_varname, '_v'];
@@ -44,7 +44,7 @@ function [val_mean, val, west_cutoff] = mc_profiles2draw (pr_asc, pr_dsc, varnam
 
          max_spread0 = max ([spread_asc0, spread_dsc0, spread_mean0]);
          
-         if (WEST_WIND_CORR < 0 && max_spread0 > 180)
+         if (~isempty (WEST_WIND_CORR) && WEST_WIND_CORR < 0 && max_spread0 > 180)
             best_spread = 1/eps;  
             for cutoff = 170:10:270
                 cur_val_asc = val_asc;
@@ -73,7 +73,7 @@ function [val_mean, val, west_cutoff] = mc_profiles2draw (pr_asc, pr_dsc, varnam
             else
                 west_cutoff = nan;
             end
-        elseif (WEST_WIND_CORR > 0 && max_spread0 > 180)
+        elseif (~isempty (WEST_WIND_CORR) && WEST_WIND_CORR > 0 && max_spread0 > 180)
             west_cutoff = WEST_WIND_CORR;
             val_asc  (val_asc > west_cutoff)  = val_asc  (val_asc  > west_cutoff) - 360;
             val_dsc  (val_dsc > west_cutoff)  = val_dsc  (val_dsc  > west_cutoff) - 360; 

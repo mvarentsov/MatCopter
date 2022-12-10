@@ -23,8 +23,8 @@ function [pr] = mc_prepare_vprofiles (data, pr, z_levels, z_var, vars2draw, corr
                 cur_z = 0.5 * (z_levels (i_z) +z_levels (i_z+1));
                 z_levels2draw = [z_levels2draw; cur_z];
             end
-            pr.asc.z_levels2draw = z_levels2draw;
-            pr.dsc.z_levels2draw = z_levels2draw;
+            pr.asc.z = z_levels2draw;
+            pr.dsc.z = z_levels2draw;
         end
 
         if (~isempty (strfind (var2draw, 'windd')) || ~isempty (strfind (var2draw, 'yaw')))
@@ -63,6 +63,8 @@ function [pr] = mc_prepare_vprofiles (data, pr, z_levels, z_var, vars2draw, corr
         pr.flight_start_time = data.flight_start_time;
         pr.flight_end_time   = data.flight_end_time;
         pr.flight_mean_time  = mean ([pr.flight_start_time, pr.flight_end_time]);
+        pr.flight_mean_lon   = nanmean (data.vars.DJI_lon (data.flight_ind));
+        pr.flight_mean_lat   = nanmean (data.vars.DJI_lat (data.flight_ind));
         pr.info = data.info;
         pr.info.z_var = z_var;
         pr.corr_info.(var2draw) = corr;

@@ -7,8 +7,8 @@ function [pr_mean, pr] = mc_average_vprofiles (pr, weights)
     end
     
     for i_pr = 1:numel (pr)
-        if (~isequal (pr(i_pr).asc.z_levels2draw, pr(1).asc.z_levels2draw) || ...
-            ~isequal (pr(i_pr).dsc.z_levels2draw, pr(1).dsc.z_levels2draw))
+        if (~isequal (pr(i_pr).asc.z, pr(1).asc.z) || ...
+            ~isequal (pr(i_pr).dsc.z, pr(1).dsc.z))
             error ('different z_levels are used');
         end
     end

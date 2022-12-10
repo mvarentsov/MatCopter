@@ -1,8 +1,14 @@
-function [corr_info] = mc_estimate_inertion (sens_data, varnames, z_varname)
+function [corr_info] = mc_estimate_inertion (sens_data, varnames, max_intertion, z_varname)
+
+    try
+        max_intertion;
+    catch exc
+        max_intertion = 30;
+    end
 
     try
         z_varname;
-    catch exc;
+    catch exc
         z_varname = sens_data.info.pressure_var;
     end
     
@@ -44,7 +50,7 @@ function [corr_info] = mc_estimate_inertion (sens_data, varnames, z_varname)
 
             nan_warning = false;
 
-            for inertion = 0:30
+            for inertion = 0:max_intertion
 
                 sens_data.vars.(varname_corr) = ...
                     mc_apply_inertion_corr (sens_data.vars.(varname), inertion);

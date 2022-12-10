@@ -126,7 +126,7 @@ function dji_vars_out = mc_calc_wind (dji_vars, est_corr, imu_corr)
 %         dji_vars.windd_est = mod (dji_vars.rel_dir + dji_vars.yaw, 360);
 %     end
     
-    if (isfield (dji_vars, 'is_atti'))
+    if (ismember ('is_atti', dji_vars.Properties.VariableNames))
         dji_vars.windd_est (dji_vars.is_atti == 1) = nan;
         dji_vars.winds_est (dji_vars.is_atti == 1) = nan;
         dji_vars.winds_est_u (dji_vars.is_atti == 1) = nan;

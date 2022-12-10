@@ -1,6 +1,10 @@
-function [xf_data_tab, pressure_var] = mc_read_xf (xf_path)
+function [xf_data_tab, pressure_var] = mc_read_xf (xf_path, XF_LISTENERS)
 
-    XF_LISTENERS = {{3, 'GPS'}, {0, 'MainBoard'}, {1, 'EE03'}, {5, 'NTC'}};
+    try 
+        XF_LISTENERS;
+    catch exc
+        XF_LISTENERS = {{3, 'GPS'}, {0, 'MainBoard'}, {1, 'EE03'}, {5, 'NTC'}, {7, 'CH4'}};
+    end
     xf_data = f_LoadXF (xf_path, XF_LISTENERS);
     
     varnames = fieldnames (xf_data);

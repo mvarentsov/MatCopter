@@ -1,4 +1,8 @@
 function mc_export_vprofiles (pr, export_dir)
+    
+    assert (isstruct (pr) && isfield (pr, 'asc') && isfield (pr, 'dsc') && ...
+            istable (pr.asc) && istable (pr.dsc), 'pr should have asc and dsc fields')
+
     try 
         export_dir;
     catch
@@ -7,24 +11,26 @@ function mc_export_vprofiles (pr, export_dir)
         mkdir (export_dir);
     end
     
-    
+    pr.mean = mc_average_asc_and_dsc_segments (pr.asc, pr.dsc, nan);
+
     out = table;
-    out.z = pr.asc.z_levels2draw;
+    out.z = pr.asc.z;
     
-    snames = fieldnames (pr.asc);
-    for i_s = 1:numel (snames)
-        sname = snames {i_s};
-        if (~isstruct (pr.asc.(sname)))
+    varnames = pr.asc.Properties.VariableNames;
+
+    for i_v = 1:numel (varnames)
+        varname = varnames {i_v};
+        if (strcmp (varname, 'z'))
             continue;
         end
-        varnames = fieldnames (pr.asc.(sname));
-        for i_v = 1:numel (varnames)
-            varname = varnames {i_v};
-            out.([varname, '_asc']) = pr.asc.(sname).(varname);
-            out.([varname, '_dsc']) = pr.dsc.(sname).(varname);
-        end
+        out.([varname, '_asc'])  = pr.asc.(varname);
+        out.([varname, '_dsc'])  = pr.dsc.(varname);
+        out.([varname, '_mean']) = pr.mean.(varname);
     end
     
-    filename = [pr.info.mean_time_str4file, ' ', pr.info.fly_str, ' ', pr.info.var2zcrd, '.csv'];
-    writetable (out, [export_dir, '\', filename], 'delimiter', ';');
+    filename_csv = [pr.info.mean_time_str4file, ' ', pr.info.fly_str, ' ', pr.info.z_var, '.csv'];
+    filename_mat = [pr.info.mean_time_str4file, ' ', pr.info.fly_str, ' ', pr.info.z_var, '.mat'];
+    
+    writetable (out, [export_dir, '\', filename_csv], 'delimiter', ';');
+    save ([export_dir, '\', filename_mat], 'pr');
 end

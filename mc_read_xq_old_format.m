@@ -10,14 +10,25 @@ function [ data ] = mc_read_xq_old_format (path)
 %     end
 %     not_empty_ind = find (~is_empty);
     
-    
     start = 1;
-    gps_date_str0 = tab_data (:, start + 8);
-    gps_time_str0 = tab_data (:, start + 9);
-    gps_date_str1 = strcat (table2cell (gps_date_str0), '_', table2cell (gps_time_str0));
+    gps_date0 = table2array (tab_data (:, start + 8));
+    gps_time0 = table2array (tab_data (:, start + 9));
+
+    if (~isdatetime (gps_date0(1)))
+        try
+            gps_date0 = datetime (gps_date0, 'InputFormat', 'yyyy/MM/dd');
+        catch exc
+            error ('Something wrong with date column, check here');
+        end
+    end
+    
+    
+    if (~isduration (gps_time0(1)))
+        error ('type of time collumn is not duration')
+    end
    
     data = table;
-    data.time = datetime (gps_date_str1, 'InputFormat', 'yyyy/MM/dd_HH:mm:ss');
+    data.time = gps_date0 + gps_time0; %datetime (gps_date_str1, 'InputFormat', 'yyyy/MM/dd_HH:mm:ss');
     
     data.p     = table2array (tab_data (:, start + 4)) / 100;
     data.t     = table2array (tab_data (:, start + 5)) / 100;

@@ -13,6 +13,9 @@ function [ data ] = mc_read_xq_new_format (path)
     var_headers.gps_z  = {'XQ-iMet-XQ Altitude'}; 
     
     headers = tab_data.Properties.VariableDescriptions;
+    if (isempty (headers))
+        headers = tab_data.Properties.VariableNames;
+    end
     varnames = fieldnames (var_headers);
     for i_v = 1:numel (varnames)
         cur_ind = [];
@@ -26,7 +29,7 @@ function [ data ] = mc_read_xq_new_format (path)
         if (isempty (cur_ind))
              %fprintf ('%s%s<- []\n', varnames {i_v}, repmat (' ', 1, 20 - length (varnames {i_v})));
              %if (ismember (varnames {i_v}, var_headers_critical))
-             error (sprintf ('Variable %s is not found in %s', varnames {i_v}, csv_path));
+             error (sprintf ('Variable %s is not found in %s', varnames {i_v}, path));
              %end
         else
              fprintf ('%s%s<- %s\n', varnames {i_v}, repmat (' ', 1, 20 - length (varnames {i_v})), headers {cur_ind});
@@ -36,27 +39,49 @@ function [ data ] = mc_read_xq_new_format (path)
     
     
     data = table;
-    
-    data.date_str = strcat (table2cell (tab_data (:, var_clnm_ind.date)), '_', table2cell (tab_data (:, var_clnm_ind.time)));
-    
-    first_date_str = data.date_str {1};
-    
-    if (~isempty (strfind (first_date_str, '/')))
-        data.time = datetime (data.date_str, 'InputFormat', 'yyyy/MM/dd_HH:mm:ss');
-        if (max (data.time) < datetime (2000, 1, 1, 0, 0, 0))
-            fprintf ('mc_read_xq_new(): dd/MM/yyyy_HH:mm:ss is used\n');
-            data.time = datetime (data.date_str, 'InputFormat', 'dd/MM/yyyy_HH:mm:ss');
+
+    % Different Matlab versions perform in different way 
+
+    if (iscell (table2array(tab_data (1, var_clnm_ind.date))))
+        first_date_str = table2cell (tab_data (:, var_clnm_ind.date));
+        if (contains (first_date_str, '/'))
+            dates = datetime (table2cell (tab_data (:, var_clnm_ind.date)), 'InputFormat', 'yyyy/MM/dd');
+        else
+            try
+                dates = datetime (table2array (tab_data (:, var_clnm_ind.date)), 'InputFormat', 'dd.MM.yyyy');
+            catch exc
+                dates = datetime (table2array (tab_data (:, var_clnm_ind.date)), 'InputFormat', 'yyyy.MM.dd');        
+            end
         end
-    else
-        try
-            data.time = datetime (data.date_str, 'InputFormat', 'dd.MM.yyyy_HH:mm:ss');
-        catch exc
-            data.time = datetime (data.date_str, 'InputFormat', 'yyyy.MM.dd_HH:mm:ss');        
-        end
+    elseif (isdatetime (table2array(tab_data (1, var_clnm_ind.date))))
+        dates = table2array(tab_data (:, var_clnm_ind.date));
     end
-    
-    data.date_str = [];
-    
+
+    if (isduration (table2array(tab_data (1, var_clnm_ind.time))))
+        times = table2array(tab_data (:, var_clnm_ind.time)); 
+    else
+        error ('Unknown time type, debug here')
+    end
+    data.time = datetime (year (dates), month (dates), day (dates)) + times;
+
+%     first_date_str = data.date_str {1};
+%     
+%     if (~isempty (strfind (first_date_str, '/')))
+%         data.time = datetime (data.date_str, 'InputFormat', 'yyyy/MM/dd_HH:mm:ss');
+%         if (max (data.time) < datetime (2000, 1, 1, 0, 0, 0))
+%             fprintf ('mc_read_xq_new(): dd/MM/yyyy_HH:mm:ss is used\n');
+%             data.time = datetime (data.date_str, 'InputFormat', 'dd/MM/yyyy_HH:mm:ss');
+%         end
+%     else
+%         try
+%             data.time = datetime (data.date_str, 'InputFormat', 'dd.MM.yyyy_HH:mm:ss');
+%         catch exc
+%             data.time = datetime (data.date_str, 'InputFormat', 'yyyy.MM.dd_HH:mm:ss');        
+%         end
+%     end
+%     
+%     data.date_str = [];
+
     for i_v = 1:numel (varnames)
         cur_varname = varnames {i_v};
         if (~ismember  (cur_varname, {'date', 'time'}))
