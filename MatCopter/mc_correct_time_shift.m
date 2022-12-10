@@ -18,7 +18,10 @@ function [best_dt, best_dt_asc, best_dt_w] = mc_correct_time_shift (dji_data_src
     end
     
     dji_data = dji_data_src;
-    
+
+    best_dt_w = nan;
+    best_dt_asc = nan;
+    best_dt_dsc = nan;
 
     for dt = -90 * time_step : time_step : 90 * time_step
         
@@ -77,10 +80,13 @@ function [best_dt, best_dt_asc, best_dt_w] = mc_correct_time_shift (dji_data_src
             max_corr_dsc = corr_dsc;
             best_dt_dsc = dt;
         end
-
-
     end
-
+    
+    if (isnan (best_dt_w) && ~isnan (best_dt_asc))
+        best_dt_w = best_dt_asc;
+        best_dt_dsc = best_dt_asc;
+    end
+    
     try
         fprintf ('mc_correct_time_shift(): Time shift correction done, best dt = %d, best dt_asc = %d;  best dt_asc = %d; best dt_w = %d\n', ...
                  round (best_dt / time_step), round (best_dt_asc / time_step), round (best_dt_dsc / time_step), round (best_dt_w / time_step));
