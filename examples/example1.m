@@ -1,6 +1,6 @@
 %% Import MatCopter and other requied libs
-addpath ('MatCopter\');
-addpath ('libs\tight_subplot\');
+addpath ('..\MatCopter\');
+addpath ('..\libs\tight_subplot\');
 
 
 %% Load flight data 

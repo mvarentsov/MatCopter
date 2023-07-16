@@ -321,7 +321,13 @@ function [data] = mc_read_flightlog_phantom (csv_path, reload)
     fprintf ('mc_read_flightlog_phantom(): time range: %s - %s\n', str1, str2);
 
     if (max (data.vars.time) - min (data.vars.time) > days (1))
-        error ('time difference > 1 day, something is likely wrong');
+        time_diff = diff (data.vars.time);
+        time_diff = [nan; time_diff];
+
+        [~, max_ind] = max (time_diff);
+        data.vars = data.vars (max_ind:end, :);
+
+        warning ('time difference > 1 day, some part is removed');
     end
     
 
