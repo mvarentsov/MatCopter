@@ -50,8 +50,13 @@ function [pr] = mc_prepare_vprofiles (data, pr, z_levels, z_var, vars2draw, corr
                 corr = 0;
             else
                 if (ischar (corr_mode))
-                    corr = corr_info.(var2draw).(corr_mode);
-                    fprintf ('%s -> %s, %.2f\n', var2draw, corr_mode, corr);
+                    if (isfield (corr_info, var2draw))
+                        corr = corr_info.(var2draw).(corr_mode);
+                        fprintf ('%s -> %s, %.2f\n', var2draw, corr_mode, corr);
+                    else
+                        corr = 0;
+                        fprintf ('%s -> no correction defined\n', var2draw, corr_mode, corr);
+                    end
                 else
                     corr = 0;
                 end

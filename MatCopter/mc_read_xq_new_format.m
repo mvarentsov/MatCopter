@@ -16,6 +16,14 @@ function [ data ] = mc_read_xq_new_format (path)
     if (isempty (headers))
         headers = tab_data.Properties.VariableNames;
     end
+
+    if (strcmp (headers{1}, 'Var1'))
+        in = fopen (path);
+        line = fgetl (in);
+        fclose (in);
+        headers = strsplit (line, ',');
+    end
+    
     varnames = fieldnames (var_headers);
     for i_v = 1:numel (varnames)
         cur_ind = [];
@@ -50,7 +58,11 @@ function [ data ] = mc_read_xq_new_format (path)
             try
                 dates = datetime (table2array (tab_data (:, var_clnm_ind.date)), 'InputFormat', 'dd.MM.yyyy');
             catch exc
-                dates = datetime (table2array (tab_data (:, var_clnm_ind.date)), 'InputFormat', 'yyyy.MM.dd');        
+                try
+                    dates = datetime (table2array (tab_data (:, var_clnm_ind.date)), 'InputFormat', 'yyyy.MM.dd');        
+                catch exc
+                    dates = datetime (table2array (tab_data (:, var_clnm_ind.date)), 'InputFormat', 'dd-MM-yyyy');    
+                end
             end
         end
     elseif (isdatetime (table2array(tab_data (1, var_clnm_ind.date))))

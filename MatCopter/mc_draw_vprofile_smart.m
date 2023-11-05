@@ -78,13 +78,17 @@ function [leg_h, leg_str, val_lim, west_cutoff] = mc_draw_vprofile_smart (pr, va
             if (opts.SEPARATE_ASC_DSC >= 2)
                 f = fill (x_plot, y_plot, color, 'EdgeColor', 'none');
                 set (f, 'FaceAlpha', 0.2);
+                if (opts.SEPARATE_ASC_DSC >= 3)
+                    plot (pr.asc.(varname),  z_levels, ':k', 'LineWidth', 0.5, 'Color', color);
+                    plot (pr.dsc.(varname),  z_levels, '--k', 'LineWidth', 0.5, 'Color', color);
+                end
             end
             p1 = plot (x, y, '-k', 'LineWidth', 2, 'Color', color);
          else
             p1 = polarplot (x*pi/180, y, '-k', 'LineWidth', 2, 'Color', color);
          end
 
-         leg_str1 = [varname];
+         leg_str1 = [varname, ', %CORR'];
          leg_str = [leg_str, leg_str1];
          leg_h = [leg_h, p1];         
     end

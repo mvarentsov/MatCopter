@@ -68,8 +68,10 @@ function [leg_str, leg_h, data_val_lim, west_cutoff] = mc_draw_vprofiles (pr, va
             
              if (isfield (pr(i_pr), 'legend_str'))
                  cur_leg_str = pr(i_pr).legend_str;
-                 cur_leg_str = strrep (cur_leg_str, 'CORR',  pr(i_pr).corr_str.(cur_varname));
              end
+
+             cur_leg_str = strrep (cur_leg_str, '%CORR',  pr(i_pr).corr_str.(cur_varname));
+
 
              leg_str = [leg_str, cur_leg_str];
              leg_h = [leg_h, cur_leg_h];
@@ -113,7 +115,7 @@ function [leg_str, leg_h, data_val_lim, west_cutoff] = mc_draw_vprofiles (pr, va
                 end
             end
         end
-        if (use_data_val_lim)
+        if (use_data_val_lim && data_val_lim(2) > data_val_lim(1))
             xlim (data_val_lim);
         end
     end
@@ -131,39 +133,41 @@ function [leg_str, leg_h, data_val_lim, west_cutoff] = mc_draw_vprofiles (pr, va
             set (gca, 'XTick', 0:10:100);
         end
     end
-        
+
+    def_labels.RUS.height = 'Высота [м]';
+    def_labels.RUS.rh     = 'Отн. влажность [%]';
+    def_labels.RUS.t      = 'Температура [{\circ}C]';
+    def_labels.RUS.pt     = 'Потенциальная температура [K]';
+    def_labels.RUS.winds  = 'Скорость ветра [м/с]';
+    def_labels.RUS.windd  = 'Направление ветра [{\circ}]';
+    def_labels.RUS.conc   = 'Концентрация';
+
+    def_labels.ENG.height = 'Height [m]';
+    def_labels.ENG.rh     = 'Rel. humidity [%]';
+    def_labels.ENG.t      = 'Temperature [{\circ}C]';
+    def_labels.ENG.pt     = 'Potential temperature [K]';
+    def_labels.ENG.winds  = 'Wind speed [m/s]';
+    def_labels.ENG.windd  = 'Wind direction [{\circ}]';
+    def_labels.ENG.conc   = 'Concentration';
+    
+
     if (~opts.RADIAL_PLOT)
-        if (strcmp (opts.LANG, 'RUS'))
-            if (strcmp (varname, 't') || ~isempty (strfind (varname, '_t')))
-                xlabel ('Температура [{\circ}C]', 'FontSize', 14, 'FontWeight', 'bold');
-            elseif (strcmp (varname, 'pt') || ~isempty (strfind (varname, '_pt')))
-                xlabel ('Потенциальная [{\circ}C]', 'FontSize', 14, 'FontWeight', 'bold');
-            elseif (~isempty (strfind (varname, 'winds')))
-                xlabel ('Скорость ветра [м/с]', 'FontSize', 14, 'FontWeight', 'bold');
-            elseif (~isempty (strfind (varname, 'windd')))
-                xlabel ('Направление ветра [{\circ}]', 'FontSize', 14, 'FontWeight', 'bold');
-            elseif (~isempty (strfind (varname, 'rh')))
-                xlabel ('Отн. влажность [%]', 'FontSize', 14, 'FontWeight', 'bold');
-            end
-            ylabel ('Высота [м]', 'FontSize', 14, 'FontWeight', 'bold');
-        else
-            if (strcmp (varname, 't') || ~isempty (strfind (varname, '_t')))
-                xlabel ('Temperature [{\circ}C]', 'FontSize', 14, 'FontWeight', 'bold');
-            elseif (strcmp (varname, 'pt') || ~isempty (strfind (varname, '_pt')))
-                xlabel ('Potential temperature [K]', 'FontSize', 14, 'FontWeight', 'bold');
-            elseif (~isempty (strfind (varname, 'winds')))
-                xlabel ('Wind speed [m/s]', 'FontSize', 14, 'FontWeight', 'bold');
-            elseif (~isempty (strfind (varname, 'windd')))
-                xlabel ('Wind direction [{\circ}]', 'FontSize', 14, 'FontWeight', 'bold');
-            elseif (~isempty (strfind (varname, 'rh')))
-                xlabel ('Rel. humidity [%]', 'FontSize', 14, 'FontWeight', 'bold');
-            elseif (~isempty (strfind (varname, 'yaw')))
-                xlabel ('Aircraft yaw [{\circ}]', 'FontSize', 14, 'FontWeight', 'bold');
-            end
-            ylabel ('Height [m]', 'FontSize', 14, 'FontWeight', 'bold');
+        if (strcmp (varname, 't') || contains (varname, '_t'))
+            xlabel (def_labels.(opts.LANG).t, 'FontSize', 14, 'FontWeight', 'bold');
+        elseif (strcmp (varname, 'pt') || contains (varname, '_pt'))
+            xlabel (def_labels.(opts.LANG).pt, 'FontSize', 14, 'FontWeight', 'bold');
+        elseif (contains (varname, 'winds'))
+            xlabel (def_labels.(opts.LANG).winds, 'FontSize', 14, 'FontWeight', 'bold');
+        elseif (contains (varname, 'windd'))
+            xlabel (def_labels.(opts.LANG).windd, 'FontSize', 14, 'FontWeight', 'bold');
+        elseif (contains (varname, 'rh'))
+            xlabel (def_labels.(opts.LANG).rh, 'FontSize', 14, 'FontWeight', 'bold');
+        elseif (contains (varname, 'Snif_'))
+            xlabel (def_labels.(opts.LANG).conc, 'FontSize', 14, 'FontWeight', 'bold');
         end
+        ylabel (def_labels.(opts.LANG).height, 'FontSize', 14, 'FontWeight', 'bold');
         
-        if (~isempty (strfind (varname, 'windd')))
+        if (contains (varname, 'windd'))
             x_ticks = [-360:45:360];
             x_tick_labels = {'N', 'NW', 'W', 'SW', 'S', 'SE', 'E', 'NE', ...
                              'N', 'NW', 'W', 'SW', 'S', 'SE', 'E', 'NE'};   
@@ -173,8 +177,5 @@ function [leg_str, leg_h, data_val_lim, west_cutoff] = mc_draw_vprofiles (pr, va
             %set (gca, 'XTickLabel', get (gca, 'XTick'));
         end
     end
-    
-    %pause;
-
 end
 
