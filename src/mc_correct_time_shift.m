@@ -14,7 +14,7 @@ function [best_dt, best_dt_asc, best_dt_w] = mc_correct_time_shift (dji_data_src
     try
         time_step = meteo_time (2) - meteo_time (1);
     catch exc
-        disp ('aaa');
+        error ('only one value in meteo_time array, at least two is needed');
     end
     
     dji_data = dji_data_src;

@@ -14,7 +14,10 @@ function [data, pressure_var] = f_read_sniffer (path)
     data = table2timetable(data);
 
     data.TimeStamp = [];
-    data.Var15 = [];
+    try
+        data.Var15 = [];
+    catch 
+    end
    
     for i = 1:numel (data.Properties.VariableNames)
         varname = data.Properties.VariableNames{i};
@@ -38,8 +41,8 @@ function [data, pressure_var] = f_read_sniffer (path)
 %     data.sens_t = str2double (raw_data.Var2);
 %     data.sens_rh = str2double (raw_data.Var3);
 %     data = table2timetable (struct2table (data));
-    
-    pressure_var = 'Snif_PressurePa';
+    data.Snif_p = data.Snif_PressurePa / 100;
+    pressure_var = 'Snif_p';
 
     
     

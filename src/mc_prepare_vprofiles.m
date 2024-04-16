@@ -68,8 +68,12 @@ function [pr] = mc_prepare_vprofiles (data, pr, z_levels, z_var, vars2draw, corr
         pr.flight_start_time = data.flight_start_time;
         pr.flight_end_time   = data.flight_end_time;
         pr.flight_mean_time  = mean ([pr.flight_start_time, pr.flight_end_time]);
-        pr.flight_mean_lon   = nanmean (data.vars.DJI_lon (data.flight_ind));
-        pr.flight_mean_lat   = nanmean (data.vars.DJI_lat (data.flight_ind));
+        try
+            pr.flight_mean_lon   = nanmean (data.vars.DJI_lon (data.flight_ind));
+            pr.flight_mean_lat   = nanmean (data.vars.DJI_lat (data.flight_ind));
+        catch
+            warning ('DJI data is not availible')
+        end
         pr.info = data.info;
         pr.info.z_var = z_var;
         pr.corr_info.(var2draw) = corr;

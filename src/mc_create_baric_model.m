@@ -13,16 +13,16 @@ function [model] = mc_create_baric_model (data, flight_ind, t_varname, p_varname
 
     [model.mean_t, ...
      model.mean_p]  = mc_intmean4scalar (model.p_intervals, data.vars.(p_varname) (flight_ind),  data.vars.(t_varname) (flight_ind));
-    mean_dji_height = mc_intmean4scalar (model.p_intervals, data.vars.(p_varname) (flight_ind),  data.vars.DJI_rel_height (flight_ind));
+    %mean_dji_height = mc_intmean4scalar (model.p_intervals, data.vars.(p_varname) (flight_ind),  data.vars.DJI_rel_height (flight_ind));
     
     model.mean_t    = flipud (model.mean_t);
     model.mean_p    = flipud (model.mean_p);
-    mean_dji_height = flipud (mean_dji_height);
+    %mean_dji_height = flipud (mean_dji_height);
     
     ok_ind = find (~isnan (model.mean_t .* model.mean_p));
     model.mean_t = model.mean_t (ok_ind);
     model.mean_p = model.mean_p (ok_ind);
-    mean_dji_height = mean_dji_height (ok_ind);
+    %mean_dji_height = mean_dji_height (ok_ind);
    
     
     model.mean_rel_height = nan (size (model.mean_p));

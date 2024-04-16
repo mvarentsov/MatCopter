@@ -33,7 +33,8 @@ function [xq_data, p_sensor_name] = mc_read_xq (sensor_data_path)
         xq_data.Properties.VariableNames {i_var} = ['XQ_', cur_name];
     end
 
-    
+    xq_data.XQ_p (xq_data.XQ_p > 1800) = nan;
+
     p_sensor_name = 'XQ_p'; 
     
     [~, ind] = sort (xq_data.time);

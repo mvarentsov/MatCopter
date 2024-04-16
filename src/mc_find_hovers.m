@@ -32,7 +32,8 @@ function [ hovers ] = mc_find_hovers (data, mode, min_hover_len, smooth_size)
                  varnames = data.vars.Properties.VariableNames;
                  for i_n = 1:numel (varnames)
                     varname = varnames {i_n};
-                    cur_hover.mean_vars.(varname) = nanmean (data.vars.(varname)(cur_hover.start_ind:cur_hover.end_ind));
+                    cur_hover.means.(varname) = nanmean (data.vars.(varname)(cur_hover.start_ind:cur_hover.end_ind));
+                    cur_hover.stds.(varname) = nanstd (data.vars.(varname)(cur_hover.start_ind:cur_hover.end_ind));
                  end
                 hovers = [hovers; cur_hover];
             end
